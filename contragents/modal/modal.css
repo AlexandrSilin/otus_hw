@@ -1,0 +1,11 @@
+.contragent-modal.hidden {
+    display: none;
+}
+
+.contragent-modal:not(.hidden) {
+    display: flex;
+}
+
+.contragent-modal input.invalid {
+    border-color: #dc2626;
+}

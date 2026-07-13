@@ -1,0 +1,11 @@
+#contragents-tbody tr {
+    cursor: pointer;
+}
+
+#contragents-tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+#contragents-tbody .delete-btn {
+    cursor: pointer;
+}
