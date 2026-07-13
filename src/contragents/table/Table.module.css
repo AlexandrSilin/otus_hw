@@ -1,0 +1,51 @@
+.wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  font-size: 0.875rem;
+  text-align: left;
+  color: #6b7280;
+  border-collapse: collapse;
+}
+
+.table thead {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #374151;
+  background: #f9fafb;
+}
+
+.table th,
+.table td {
+  padding: 1rem 1.5rem;
+}
+
+.table tbody tr {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.table tbody th {
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.deleteButton {
+  border: 0;
+  background: transparent;
+  color: #dc2626;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  text-decoration: underline;
+}
