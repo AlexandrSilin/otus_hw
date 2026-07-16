@@ -3,11 +3,14 @@ import userEvent from '@testing-library/user-event';
 import App from './App';
 
 describe('App', () => {
-  it('renders logo and add button', () => {
+  it('renders logo, add button and footer', () => {
     render(<App />);
 
     expect(screen.getByAltText('МойСклад')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Добавить/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} МойСклад. All Rights Reserved.`),
+    ).toBeInTheDocument();
   });
 
   it('shows initial contragents in the table', () => {

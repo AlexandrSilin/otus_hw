@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from './contragents/modal/Modal';
 import Table from './contragents/table/Table';
+import Footer from './footer/Footer';
 import logo from './assets/logo.png';
 import styles from './App.module.css';
 
@@ -72,9 +73,9 @@ export default function App() {
     <div className={styles.app}>
       <header className={styles.header}>
         <nav className={styles.nav}>
-          <a href="#" className={styles.logoLink}>
+          <div className={styles.logoLink}>
             <img src={logo} className={styles.logo} alt="МойСклад" />
-          </a>
+          </div>
           <button type="button" className={styles.addButton} onClick={handleAdd}>
             <span className={styles.addIcon} aria-hidden="true">
               +
@@ -91,6 +92,8 @@ export default function App() {
           onEdit={handleEdit}
         />
       </main>
+
+      <Footer />
 
       <Modal
         isOpen={isModalOpen}
