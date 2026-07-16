@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { Form, Field } from 'react-final-form';
+import validate from './validate';
 import styles from './Modal.module.css';
 
 const emptyForm = {
@@ -23,64 +24,48 @@ function toFormState(contragent) {
   };
 }
 
+function TextField({
+  id,
+  name,
+  label,
+  inputMode,
+  maxLength,
+}) {
+  return (
+    <Field name={name}>
+      {({ input, meta }) => {
+        const showError = meta.error && (meta.touched || meta.submitFailed);
+
+        return (
+          <div className={styles.field}>
+            <label htmlFor={id}>{label}</label>
+            <input
+              {...input}
+              id={id}
+              inputMode={inputMode}
+              maxLength={maxLength}
+              className={showError ? styles.invalid : undefined}
+            />
+            {showError && <p className={styles.error}>{meta.error}</p>}
+          </div>
+        );
+      }}
+    </Field>
+  );
+}
+
 export default function Modal({ isOpen, contragent = null, onSave, onCancel }) {
-  const [form, setForm] = useState(() => toFormState(contragent));
-  const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setErrors({});
-    setForm(toFormState(contragent));
-  }, [isOpen, contragent]);
-
   if (!isOpen) {
     return null;
   }
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const validate = () => {
-    const nextErrors = {};
-
-    if (!form.name.trim()) {
-      nextErrors.name = true;
-    }
-
-    if (!form.address.trim()) {
-      nextErrors.address = true;
-    }
-
-    if (!/^\d{11}$/.test(form.inn.trim())) {
-      nextErrors.inn = 'ИНН должен содержать 11 цифр';
-    }
-
-    if (!/^\d{9}$/.test(form.kpp.trim())) {
-      nextErrors.kpp = 'КПП должен содержать 9 цифр';
-    }
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (!validate()) {
-      return;
-    }
-
+  const handleSubmit = (values) => {
     onSave({
-      id: form.id,
-      name: form.name.trim(),
-      inn: form.inn.trim(),
-      address: form.address.trim(),
-      kpp: form.kpp.trim(),
+      id: values.id ?? null,
+      name: values.name.trim(),
+      inn: values.inn.trim(),
+      address: values.address.trim(),
+      kpp: values.kpp.trim(),
     });
   };
 
@@ -100,66 +85,43 @@ export default function Modal({ isOpen, contragent = null, onSave, onCancel }) {
           </button>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <div className={styles.field}>
-            <label htmlFor="contragent-name">Наименование</label>
-            <input
-              id="contragent-name"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className={errors.name ? styles.invalid : undefined}
-            />
-          </div>
+        <Form
+          key={contragent?.id ?? 'new'}
+          onSubmit={handleSubmit}
+          initialValues={toFormState(contragent)}
+          validate={validate}
+          render={({ handleSubmit: submit }) => (
+            <form className={styles.form} onSubmit={submit} noValidate>
+              <Field name="id" render={({ input }) => <input {...input} type="hidden" />} />
 
-          <div className={styles.field}>
-            <label htmlFor="contragent-inn">ИНН</label>
-            <input
-              id="contragent-inn"
-              name="inn"
-              value={form.inn}
-              onChange={handleChange}
-              inputMode="numeric"
-              maxLength={11}
-              className={errors.inn ? styles.invalid : undefined}
-            />
-            {errors.inn && <p className={styles.error}>{errors.inn}</p>}
-          </div>
+              <TextField id="contragent-name" name="name" label="Наименование" />
+              <TextField
+                id="contragent-inn"
+                name="inn"
+                label="ИНН"
+                inputMode="numeric"
+                maxLength={11}
+              />
+              <TextField id="contragent-address" name="address" label="Адрес" />
+              <TextField
+                id="contragent-kpp"
+                name="kpp"
+                label="КПП"
+                inputMode="numeric"
+                maxLength={9}
+              />
 
-          <div className={styles.field}>
-            <label htmlFor="contragent-address">Адрес</label>
-            <input
-              id="contragent-address"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-              className={errors.address ? styles.invalid : undefined}
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="contragent-kpp">КПП</label>
-            <input
-              id="contragent-kpp"
-              name="kpp"
-              value={form.kpp}
-              onChange={handleChange}
-              inputMode="numeric"
-              maxLength={9}
-              className={errors.kpp ? styles.invalid : undefined}
-            />
-            {errors.kpp && <p className={styles.error}>{errors.kpp}</p>}
-          </div>
-
-          <div className={styles.actions}>
-            <button type="submit" className={styles.saveButton}>
-              Сохранить
-            </button>
-            <button type="button" className={styles.cancelButton} onClick={onCancel}>
-              Отменить
-            </button>
-          </div>
-        </form>
+              <div className={styles.actions}>
+                <button type="submit" className={styles.saveButton}>
+                  Сохранить
+                </button>
+                <button type="button" className={styles.cancelButton} onClick={onCancel}>
+                  Отменить
+                </button>
+              </div>
+            </form>
+          )}
+        />
       </div>
     </div>
   );
