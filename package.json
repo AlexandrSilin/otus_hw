@@ -16,7 +16,7 @@
     "json-server": "^0.17.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "CHOKIDAR_USEPOLLING=true WATCHPACK_POLLING=true react-scripts start",
     "server": "json-server --watch db.json --port 3001",
     "dev": "concurrently \"npm run server\" \"npm start\"",
     "build": "react-scripts build",

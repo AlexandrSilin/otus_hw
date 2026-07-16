@@ -99,11 +99,14 @@ describe('App', () => {
     global.fetch = createFetchMock();
   });
 
-  it('renders logo and add button', async () => {
+  it('renders logo, add button and footer', async () => {
     renderApp();
 
     expect(screen.getByAltText('МойСклад')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Добавить/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(`© ${new Date().getFullYear()} МойСклад. All Rights Reserved.`),
+    ).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText('ООО «Ромашка»')).toBeInTheDocument();
     });
