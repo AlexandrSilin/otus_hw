@@ -68,7 +68,15 @@ export default function App() {
 
       <main className={styles.main}>
         {loading && <p>Загрузка...</p>}
-        {error && <p>Ошибка: {error}</p>}
+        {!loading && error && (
+          <p>
+            Не удалось загрузить данные. Запустите API: <code>npm run server</code>
+            {' '}
+            (
+            {error}
+            )
+          </p>
+        )}
         {!loading && !error && (
           <Table
             contragents={contragents}

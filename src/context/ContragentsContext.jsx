@@ -19,7 +19,7 @@ export function ContragentsProvider({ children }) {
 
     try {
       const data = await getContragents();
-      setContragents(data);
+      setContragents(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
     } finally {

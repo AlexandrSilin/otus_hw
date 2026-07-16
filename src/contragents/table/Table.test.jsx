@@ -20,6 +20,20 @@ const contragents = [
 ];
 
 describe('Table', () => {
+  it('renders empty state when there are no contragents', () => {
+    render(<Table contragents={[]} onDelete={jest.fn()} onEdit={jest.fn()} />);
+
+    expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+    expect(screen.getByText('Контрагентов пока нет')).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  });
+
+  it('renders empty state when contragents is not an array', () => {
+    render(<Table contragents={null} onDelete={jest.fn()} onEdit={jest.fn()} />);
+
+    expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+  });
+
   it('renders columns and contragent rows', () => {
     render(<Table contragents={contragents} onDelete={jest.fn()} onEdit={jest.fn()} />);
 

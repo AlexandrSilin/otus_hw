@@ -1,6 +1,17 @@
 import styles from './Table.module.css';
 
-export default function Table({ contragents, onDelete, onEdit }) {
+export default function Table({ contragents = [], onDelete, onEdit }) {
+  const items = Array.isArray(contragents) ? contragents : [];
+
+  if (items.length === 0) {
+    return (
+      <div className={styles.empty} data-testid="empty-state">
+        <p className={styles.emptyTitle}>Контрагентов пока нет</p>
+        <p className={styles.emptyText}>Нажмите «Добавить», чтобы создать первого контрагента</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wrapper}>
       <table className={styles.table}>
@@ -14,7 +25,7 @@ export default function Table({ contragents, onDelete, onEdit }) {
           </tr>
         </thead>
         <tbody>
-          {contragents.map((item) => (
+          {items.map((item) => (
             <tr key={item.id} onDoubleClick={() => onEdit(item.id)}>
               <th scope="row">{item.name}</th>
               <td>{item.inn}</td>
