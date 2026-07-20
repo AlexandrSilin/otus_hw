@@ -2,38 +2,22 @@ import { useState } from 'react';
 import Modal from './contragents/modal/Modal';
 import Table from './contragents/table/Table';
 import Footer from './footer/Footer';
+import { useContragents } from './context/ContragentsContext';
 import logo from './assets/logo.png';
 import styles from './App.module.css';
 
-const initialContragents = [
-  {
-    id: '1',
-    name: 'ООО «Ромашка»',
-    inn: '77012345678',
-    address: 'г. Москва, ул. Ленина, д. 1',
-    kpp: '770101001',
-  },
-  {
-    id: '2',
-    name: 'АО «ТехноПром»',
-    inn: '50098765432',
-    address: 'г. Химки, ул. Заводская, д. 15',
-    kpp: '500901001',
-  },
-  {
-    id: '3',
-    name: 'ИП Иванов И.И.',
-    inn: '77234567890',
-    address: 'г. Москва, пр-т Мира, д. 10',
-    kpp: '772301001',
-  },
-];
-
 export default function App() {
-  const [contragents, setContragents] = useState(initialContragents);
+  const {
+    contragents,
+    loading,
+    error,
+    addContragent,
+    editContragent,
+    removeContragent,
+  } = useContragents();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContragent, setEditingContragent] = useState(null);
-  const [nextId, setNextId] = useState(4);
 
   const handleAdd = () => {
     setEditingContragent(null);
@@ -41,7 +25,7 @@ export default function App() {
   };
 
   const handleEdit = (id) => {
-    const contragent = contragents.find((item) => item.id === id) ?? null;
+    const contragent = contragents.find((item) => String(item.id) === String(id)) ?? null;
     setEditingContragent(contragent);
     setIsModalOpen(true);
   };
@@ -51,22 +35,19 @@ export default function App() {
     setEditingContragent(null);
   };
 
-  const handleSave = (data) => {
+  const handleSave = async (data) => {
     if (data.id) {
-      setContragents((prev) =>
-        prev.map((item) => (item.id === data.id ? { ...data } : item)),
-      );
+      await editContragent(data);
     } else {
-      setContragents((prev) => [...prev, { ...data, id: String(nextId) }]);
-      setNextId((prev) => prev + 1);
+      await addContragent(data);
     }
 
     setIsModalOpen(false);
     setEditingContragent(null);
   };
 
-  const handleDelete = (id) => {
-    setContragents((prev) => prev.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    await removeContragent(id);
   };
 
   return (
@@ -86,11 +67,23 @@ export default function App() {
       </header>
 
       <main className={styles.main}>
-        <Table
-          contragents={contragents}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-        />
+        {loading && <p>Загрузка...</p>}
+        {!loading && error && (
+          <p>
+            Не удалось загрузить данные. Запустите API: <code>npm run server</code>
+            {' '}
+            (
+            {error}
+            )
+          </p>
+        )}
+        {!loading && !error && (
+          <Table
+            contragents={contragents}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
+        )}
       </main>
 
       <Footer />
